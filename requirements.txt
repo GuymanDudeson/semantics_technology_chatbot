@@ -1,0 +1,4 @@
+rivescript
+pandas
+requests
+lxml
