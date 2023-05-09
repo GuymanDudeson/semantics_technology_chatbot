@@ -1,0 +1,80 @@
+! version = 2.0
+
+> object crawl_casualties python
+    import pandas as pd
+    import json
+    from datetime import date, datetime
+
+
+    def __crawl_wikipedia():
+        url = r'https://en.wikipedia.org/wiki/Casualties_of_the_Russo-Ukrainian_War'
+        tables = pd.read_html(url)
+
+        wikipedia_source = {"crawl_date": date.today().strftime("%d/%m/%Y"), "content": []}
+        wikipedia_data = []
+        for entry in tables[2].values:
+            x = {"kind": entry[0], "amount": entry[1], "date_range": entry[2], "source": entry[3]}
+            wikipedia_data.append(x)
+
+        wikipedia_source["content"] = wikipedia_data
+
+        wikipedia_file = open("wikipedia_source.json", "w")
+        wikipedia_file.write(json.dumps(wikipedia_source))
+        return wikipedia_file
+
+
+    try:
+        openedFile = open("wikipedia_source.json", "r")
+    except FileNotFoundError:
+        print("No File: Crawling")
+        openedFile = __crawl_wikipedia()
+    else:
+        wikipedia_json = json.loads(openedFile.read())
+        if datetime.strptime(wikipedia_json["crawl_date"], "%d/%m/%Y").date() < date.today():
+            print("File old: Crawling")
+            openedFile = __crawl_wikipedia()
+    openedFile.seek(0, 0)
+    return json.loads(openedFile.read())["crawl_date"]
+< object
+
++ [*] victims  [*] [russia|ukraine]
+- Which side's casualties would you like to know? Russian/Ukrainian soldiers or civilians? {topic=side}
+
+> topic side
+    +  [*] (soldiers|soldier|army|military) [*]
+    - Which sides <star>? Russia or Ukraine
+
+    + [*] (russian|russia|russian) [*]
+    - <set scope=russian> Okay, only the casualties of the Russian side.
+    ^ Which source would you like the numbers from? The options are:
+    ^ <call>get_sources_as_options</call>
+    ^ Please enter the respective number.
+    ^ {topic=source}
+
+    + [*] (ukraine|ukrainian|ukrainians) [*]
+    - <set scope=ukraine> Okay, only the casualties of the Ukrainian side.
+    ^ Which source would you like the numbers from? The options are:
+    ^ <call>get_sources_as_options</call>
+    ^ Please enter the respective number.
+    ^ {topic=source}
+
+    + [*] (civilian|civilians|innocent) [*]
+    - <set scope=civil> Okay, only only the civilian casualties.
+    ^ Which source would you like the numbers from? The options are:
+    ^ <call>get_sources_as_options</call>
+    ^ Please enter the respective number.
+    ^ {topic=source}
+< topic
+
+> topic source
+    + [*] # [*]
+    - <set sourceindex=<star>> The numbers from source number <star> are:
+    ^ <call>get_entry</call>
+
+    + _
+    - Please enter a Number so I can provide the requested information from the correct source
+< topic
+
+
++ hello world
+-<call>crawl_casualties</call>
