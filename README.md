@@ -26,3 +26,12 @@
 - Thank You
 - bye
 - shutdown
+
+## ChatGPT Comparison (As of may 2023)
+
+If you ask ChatGpt about the casualties of the Russian-Ukrainian conflict you will always get the same answer. 
+ChatGPT is only trained until September 2021 so it cannot give accurate information. Furthermore does it only give the
+rough estimate "thousands have died", since that is an undisputed truth. It further gives you the recommendation to 
+search for your own trusted sources and research yourself. It also gives some examples of sources.  
+My Chatbot gives direct data but does not make sure, that Wikipedia or Statista actually have the right sources and
+therefor numbers. This might result in misinformation being spread.
