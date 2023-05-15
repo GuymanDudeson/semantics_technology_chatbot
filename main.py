@@ -109,7 +109,7 @@ bot.sort_replies()
 while True:
     msg = str(input('You> '))
 
-    if msg == 'q':
+    if msg == 'shutdown':
         break
     else:
         print('Bot> ' + bot.reply('localuser', msg))

@@ -1,5 +1,27 @@
 ! version = 2.0
 
+// Bot variables
+! var name = Infobot
+! var age  = 0
+
+// Substitutions
+! sub i'm     = i am
+! sub i'd     = i would
+! sub i've    = i have
+! sub i'll    = i will
+! sub don't   = do not
+! sub isn't   = is not
+! sub you'd   = you would
+! sub you're  = you are
+! sub you've  = you have
+! sub you'll  = you will
+! sub what's  = what is
+! sub whats   = what is
+! sub what're = what are
+! sub what've = what have
+! sub what'll = what will
+! sub who's   = who is
+
 > object crawl_casualties python
     import pandas as pd
     import json
@@ -37,13 +59,68 @@
     return json.loads(openedFile.read())["crawl_date"]
 < object
 
-+ [*] victims  [*] [russia|ukraine]
-- Which side's casualties would you like to know? Russian/Ukrainian soldiers or civilians? {topic=side}
++ *
+- I can only give Information about the casualties of the Russian-Ukrainian-War. Please try to a ask a question regarding this information.
+
++ (hello|hi|welcome)
+* <get username> != undefined => {random}
+^ Hello <get username>, I'm <bot name>, do you want to know the amount of victims from the Russian-Ukrainian conflict?!|
+^ Hello there, my name is <bot name>, do you want to know the amount of victims from the Russian-Ukrainian conflict?!|
+^ Hey, my name is <bot name>, do you want to know the amount of victims from the Russian-Ukrainian conflict?!{/random}
+- Hello there, my name is <bot name>, what is your Name? {topic=name}
+
++ what is my name
+- Your Name is <get username>.
+
+> topic name
+    + *
+    -<set username=<star>> Nice to meet you <star>! Would you like to know the amount of victims from the Russian-Ukrainian conflict?{topic=question}
+< topic
+
+
++ [*] (victims|casualties|dead|deceased)  [*] [russia|ukraine]
+- Which groups casualties would you like to know? Russian/Ukrainian soldiers or civilians? {topic=group}
+
++ [*] (russia|ukraine|war) [*]
+- Would you like to know the casualties?{topic=question}
+
+> topic question
+    + yes
+    - Which groups casualties would you like to know? Russian/Ukrainian soldiers or civilians? {topic=group}
+
+    + no
+    - I am a afraid I'm not much use besides giving information about the casualties. Feel free to try to talk to me though,
+    ^ but be aware that my creator is a lazy student and didn't give me a lot to talk about. If you give me your name I can repeat it!{topic=name}
+
+    + *
+    - I did not understand this answer. Please say yes or no.
+
+    + [*] (bye|goodbye|ciao) [*]
+    - Have a nice day! I will still be active and wait for further questions from you. If you want to shut me down, feel free to write "shutdown".{topic=random}
+< topic
+
+> topic group
+    +  [*] (soldiers|soldier|army|military) [*]
+    - Which side <star>? Russia or Ukraine{topic=side}
+
+    + [*] (civilian|civilians|innocent) [*]
+    - <set scope=civil> Okay, only the civilian casualties.
+    ^ Which source would you like the numbers from? The options are:
+    ^ <call>get_sources_as_options</call>
+    ^ Please enter the respective number.
+    ^ {topic=source}
+
+    + *
+    - You can choose between military like soldiers or civilians.
+
+    + [*] (thank you|thanks|thx) [*]
+    - You are welcome. Feel free to ask me about different sources, sides or groups. I will try my best to answer you questions.
+
+    + [*] (bye|goodbye|ciao) [*]
+    - Have a nice day! I will still be active and wait for further questions from you. If you want to shut me down, feel free to write "shutdown".{topic=random}
+< topic
 
 > topic side
-    +  [*] (soldiers|soldier|army|military) [*]
-    - Which sides <star>? Russia or Ukraine
-
     + [*] (russian|russia|russian) [*]
     - <set scope=russian> Okay, only the casualties of the Russian side.
     ^ Which source would you like the numbers from? The options are:
@@ -58,23 +135,40 @@
     ^ Please enter the respective number.
     ^ {topic=source}
 
-    + [*] (civilian|civilians|innocent) [*]
-    - <set scope=civil> Okay, only only the civilian casualties.
-    ^ Which source would you like the numbers from? The options are:
-    ^ <call>get_sources_as_options</call>
-    ^ Please enter the respective number.
-    ^ {topic=source}
+    + *
+    - Please choose a Side. Russia or Ukraine?
+
+    + [*] (thank you|thanks|thx) [*]
+    - You are welcome. Feel free to ask me about different sources, sides or groups. I will try my best to answer you questions.
+
+    + [*] (bye|goodbye|ciao) [*]
+    - Have a nice day! I will still be active and wait for further questions from you. If you want to shut me down, feel free to write "shutdown".{topic=random}
 < topic
 
 > topic source
     + [*] # [*]
-    - <set sourceindex=<star>> The numbers from source number <star> are:
+    - <set sourceindex=<star>>
     ^ <call>get_entry</call>
 
     + _
-    - Please enter a Number so I can provide the requested information from the correct source
+    - Please enter a Number so I can provide the requested information from the correct source,
+     ^ or say "Other Side" or "other group" to get other information.
+
+     + (other side|side)
+     - Ok, please choose a side. Russia or Ukraine?{topic=side}
+
+     + (other group|group)
+     - Ok, please choose a Group. Russian/Ukrainian soldiers or civilians?{topic=group}
+
+    + [*] (thank you|thanks|thx) [*]
+    - You are welcome. Feel free to ask me about different sources, sides or groups. I will try my best to answer you questions.
+
+    + [*] (bye|goodbye|ciao) [*]
+    - Have a nice day! I will still be active and wait for further questions from you. If you want to shut me down, feel free to write "shutdown".{topic=random}
 < topic
 
++ [*] (thank you|thanks|thx) [*]
+- You are welcome. Feel free to ask me about different sources, sides or groups. I will try my best to answer you questions.
 
-+ hello world
--<call>crawl_casualties</call>
++ [*] (bye|goodbye|ciao) [*]
+- Have a nice day! I will still be active and wait for further questions from you. If you want to shut me down, feel free to write "shutdown".
